@@ -1,0 +1,64 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools>=60.0",
+    "setuptools_scm[toml]>=8.0",
+    "scikit-build>=0.17",
+    "cmake>=3.11",
+    "wheel",
+]
+[project]
+name = "EMA-Diff"
+description = "EMA routines to calibrate Pilatus and obtain the diffratogram"
+license = { text = "LGPL-3.0" }
+requires-python = ">=3.8"
+version = "0.0.1"
+authors = [
+    { name = "João F. G. de A. Oliveira", email = "joao.oliveira@lnls.br" },
+    { name = "Guilherme Calligaris de Andrade", email = "guilherme.calligaris@lnls.br" },
+]
+maintainers = [
+    { name = "João F. G. de A. Oliveira", email = "joao.oliveira@lnls.br" },
+]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'License :: OSI Approved :: BSD License',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: Education',
+    'Intended Audience :: Developers',
+    'Natural Language :: English',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3.10',
+]
+dependencies = [
+    "tqdm",
+    "ipywidgets",
+    "multiprocess",
+    "datetime",
+    "h5py==3.10.0",
+    "scipy>=1.7.1",
+    "ninja>=1.10.2",
+    "pandas==2.2.2",
+    "cmake>=3.20.0",
+    "numpy>=1.24.4",
+    "wheel==0.42.0",
+    "Faker==23.2.1",
+    "typer==0.9.0",
+    "setuptools>=64.0.0",
+    "matplotlib==3.7.5",
+    "SharedArray==3.2.3",
+    "scikit-build>=0.12.0",
+    "scikit-image==0.21.0",
+    "setuptools_scm[toml]>=8.0",
+]
+
+[tool.setuptools]
+platforms = ["Linux"]
+
+[tool.setuptools_scm]
+version_file = "src/_version.py"
+version_scheme = "python-simplified-semver"
+
+[project.scripts]
+ssc-dif = "src.cli.cli:app"

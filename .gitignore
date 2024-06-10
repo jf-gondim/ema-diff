@@ -1,0 +1,17 @@
+__pycache__/
+docs/build/
+docs/html/
+docs/source/xml/
+docs/source/api/
+build/
+dist/
+_skbuild/
+.idea/
+._*
+.DS_Store
+*.egg-info/
+.vscode/
+*.png
+*.sh
+*.out
+.ipynb_checkpoints/
