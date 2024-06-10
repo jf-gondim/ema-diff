@@ -14,7 +14,7 @@ MAKEFLAGS := -j$(NUM_THREADS)
 
 # Variables
 BUILD_DIR := build
-RUNDIR=	sscDif sscDif/ src/
+RUNDIR=	emaDiff emaDiff/ 
 
 all: clean install
 

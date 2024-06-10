@@ -8,7 +8,7 @@ requires = [
     "wheel",
 ]
 [project]
-name = "EMA-Diff"
+name = "emaDiff"
 description = "EMA routines to calibrate Pilatus and obtain the diffratogram"
 license = { text = "LGPL-3.0" }
 requires-python = ">=3.8"
@@ -57,7 +57,7 @@ dependencies = [
 platforms = ["Linux"]
 
 [tool.setuptools_scm]
-version_file = "src/_version.py"
+version_file = "emaDiff/_version.py"
 version_scheme = "python-simplified-semver"
 
 [project.scripts]
