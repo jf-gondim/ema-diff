@@ -27,7 +27,6 @@ class Scan:
                  final_angle: float,
                  size_step: float,
                  number_of_steps: int,
-                 pixel_theta: np.ndarray,
                  xc: int,
                  yc: int,
                  output_folder: str,
@@ -54,7 +53,6 @@ class Scan:
             ny (int): Number of y pixels.
             detector_size_x (int): Size of the detector in x-dimension.
         """
-        self.pixel_theta     = pixel_theta
         self.initial_angle   = initial_angle
         self.final_angle     = final_angle
         self.size_step       = size_step
@@ -148,12 +146,10 @@ class Scan:
         self.mythen_variable, self.cropped_mythen, self.mythen_lids = self.mythen(self.volume)
 
         # Perform the statistics calculation to return the processed data
-        two_theta_scan, self.sum_of_intensities, self.mean, self.standard_deviation, calibration_matrix = self.estatistics(self.mythen_variable,
-                                                                                       self.cropped_mythen,
-                                                                                       self.mythen_lids)
+        two_theta_scan, self.sum_of_intensities, self.mean, self.standard_deviation = self.estatistics(self.mythen_variable, self.cropped_mythen, self.mythen_lids)
 
         return np.asarray(self.mythen_variable), np.asarray(two_theta_scan), \
-            np.asarray(self.sum_of_intensities), np.asarray(self.mean), np.asarray(self.standard_deviation), np.asarray(calibration_matrix)
+            np.asarray(self.sum_of_intensities), np.asarray(self.mean), np.asarray(self.standard_deviation)
 
 
     def mythen(self, volume: np.ndarray) -> tuple:
@@ -181,5 +177,10 @@ def get_pixel_address(calibration_pixel_: np.ndarray, tth_: np.ndarray, steps_: 
     Returns:
         np.ndarray: Array of pixel addresses.
     """
-    pixel_address_ = calibration_pixel_[:, np.newaxis] + tth_[:steps_]  # Broadcasting magic!
+    #pixel_address_ = calibration_pixel_[:, np.newaxis] + tth_[:steps_]  # Broadcasting magic!
+    #return pixel_address_
+    pixel_address = []
+    for index in range(steps_):
+        pixel_address.append(calibration_pixel_ + tth_[index])
+    pixel_address_ = np.asarray(pixel_address)
     return pixel_address_

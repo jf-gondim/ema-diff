@@ -11,9 +11,9 @@ import time
 
 nthreads = multiprocessing.cpu_count()
 
-##############
-#|          |#
-##############
+#############
+#| emaDiff |#
+#############
 
 if __name__ == "__main__":
    pass

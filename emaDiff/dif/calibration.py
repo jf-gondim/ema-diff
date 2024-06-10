@@ -12,8 +12,8 @@ import multiprocessing as mp
 
 from scipy.signal import find_peaks
 
-from .read_tiff import read_tif_volume
 from .io import get_file_list
+from .read_tiff import read_tif_volume
 
 
 class Calibration:
@@ -30,8 +30,7 @@ class Calibration:
                  cfi: str,
                  xdet: int,
                  ydet: int,
-                 lids_border: int,
-                 calibration_step_size: float):
+                 lids_border: int):
 
         self.xmin = xc - 1
         self.xmax = xc + 0
@@ -71,7 +70,7 @@ class Calibration:
         """
         # Projecting onto the y/2 theta plane
         mythen = np.sum(volume, axis = 1)
-        mth_o = np.copy(mythen)
+        mt_copy = np.copy(mythen)
 
         # Sum along the second axis
         open_mythen = np.sum(mythen, axis = 0)
@@ -89,9 +88,9 @@ class Calibration:
 
         # Apply windowing to Mythen data
         mythen = mythen[:, self.mythen_lids[0]:self.mythen_lids[1]]
-        mythen = np.transpose(mythen)
+        #mythen = np.transpose(mythen)
 
-        return mythen
+        return mt_copy.T
 
     def calibration_pixel(self, mythen_matrix) -> np.ndarray:
         """Calculates the calibration pixel values for each detector channel.
@@ -105,14 +104,14 @@ class Calibration:
         Raises:
             None
         """
-        calibration_pixel = np.zeros(self.xdet, dtype=np.float32)
 
+        calibration_pixel = np.zeros(self.xdet, dtype=np.float32)
         for index in range(self.mythen_lids[0], self.mythen_lids[1]):
-            peaks, _ = find_peaks(mythen_matrix[index], height=0.5)  # Adjust height threshold as needed
-            if peaks.size > 0:
-                calibration_pixel[index] = peaks[0] * self.calibration_step_size + self.start_angle
+            pixel_verification_value = np.where(mythen_matrix[index] == max(mythen_matrix[index]))[0]
+            calibration_pixel[index] = pixel_verification_value * self.calibration_step_size + self.start_angle
 
         return -calibration_pixel
+
 
 
     def calibration_main_run(self) -> tuple:

@@ -7,4 +7,4 @@ try:
 
 except OSError:
     import logging
-    logging.error("Could not load sscDif shared libraries")
+    logging.error("Could not load emaDiff shared libraries")
