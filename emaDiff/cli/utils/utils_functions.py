@@ -13,7 +13,5 @@ def calibration_cli(start_angle: float,
                     xdet: int,
                     ydet: int):
 
-    calib = Calibration(start_angle, end_angle, step_size, steps, xc, yc, ny, cfo, cfi, xdet, ydet)
-    calib.calibration_main_run()
-
-
+    #calib = Calibration(start_angle, end_angle, step_size, steps, xc, yc, ny, cfo, cfi, xdet, ydet)
+    #calib.calibration_main_run()

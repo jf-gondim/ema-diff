@@ -61,4 +61,4 @@ version_file = "emaDiff/_version.py"
 version_scheme = "python-simplified-semver"
 
 [project.scripts]
-ssc-dif = "src.cli.cli:app"
+emaDiff = "emaDiff.cli.cli:app"

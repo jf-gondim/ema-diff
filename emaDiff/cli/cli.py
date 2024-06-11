@@ -65,18 +65,18 @@ def __cli_commands(
     if cxt.invoked_subcommand:
         return
 
-    ssc_dif_cli_mgs = """
+    ema_diff_msg = """
 
-    ███████╗███╗   ███╗ █████╗       ██████╗ ██╗██╗      █████╗ ████████╗██╗   ██╗███████╗
-    ██╔════╝████╗ ████║██╔══██╗      ██╔══██╗██║██║     ██╔══██╗╚══██╔══╝██║   ██║██╔════╝
-    █████╗  ██╔████╔██║███████║█████╗██████╔╝██║██║     ███████║   ██║   ██║   ██║███████╗
-    ██╔══╝  ██║╚██╔╝██║██╔══██║╚════╝██╔═══╝ ██║██║     ██╔══██║   ██║   ██║   ██║╚════██║
-    ███████╗██║ ╚═╝ ██║██║  ██║      ██║     ██║███████╗██║  ██║   ██║   ╚██████╔╝███████║
-    ╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝      ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
+    ███████╗███╗   ███╗ █████╗       ██████╗ ██╗███████╗███████╗
+    ██╔════╝████╗ ████║██╔══██╗      ██╔══██╗██║██╔════╝██╔════╝
+    █████╗  ██╔████╔██║███████║█████╗██║  ██║██║█████╗  █████╗
+    ██╔══╝  ██║╚██╔╝██║██╔══██║╚════╝██║  ██║██║██╔══╝  ██╔══╝
+    ███████╗██║ ╚═╝ ██║██║  ██║      ██████╔╝██║██║     ██║
+    ╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝      ╚═════╝ ╚═╝╚═╝     ╚═╝
     """
 
-    print("Welcome to the EMA-p CLI !!!\n")
-    print(ssc_dif_cli_mgs)
+    print("Welcome to the EMADiff CLI !!!\n")
+    print(ema_diff_msg)
     print("\nYou can use the followings commands to run the CLI : ")
     print(100 * "=")
     print("[green][b]calibration[/]")
@@ -152,6 +152,9 @@ def calibration_ema(
     """
 
     # Include Args
+    # Include file existence verification of the file type uploading the calibration_matrix in this
+    # CLI function and verify if the file is a CSV or HDF5.
+
 
     # Include function call with args
     scan_calibration = calibration_cli(start_angle,
