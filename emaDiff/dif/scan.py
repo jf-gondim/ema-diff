@@ -109,24 +109,37 @@ class Scan:
         """
         # Define the nominal two theta measured
         tth = self.initial_angle + (self.size_step / 2) + np.arange(self.number_of_steps, dtype=np.float32) * self.size_step
-        tth = np.round(tth, 9)
+        # Round to 4 or 5 values
+        tth = np.round(tth, 3)
         print(f'tth: {tth}')
 
         # Perform the theta to pixel mapping using the calibration_pixel vector as input calculated in the `Calibration` class
         pixel_address = get_pixel_address(self.calibration_pixel, tth, self.number_of_steps)
-        pixel_address = pixel_address[:, mythen_lids[0]:mythen_lids[1]]
+        # Round pixel_address values?
+        pixel_address = np.round(pixel_address[:, mythen_lids[0]:mythen_lids[1]], 3)
         print(f'pixel address: {pixel_address}')
 
         flat_pixel_address = pixel_address.flatten()
         flat_croped_mythen = croped_mythen.flatten()
 
-        det_start = min(flat_pixel_address)
-        det_end   = max(flat_pixel_address)
-        print(f'det_start: {det_start}\ndet_end: {det_end}')
+        det_start = np.round(min(flat_pixel_address), 3)
+        det_end   = np.round(max(flat_pixel_address), 3)
+        print(f'det_start: {det_start:.3f}\ndet_end: {det_end:.3f}')
 
         # Calculate the histogram
-        bins    = np.arange(det_start - self.size_step / 2, det_end + self.size_step, self.size_step, dtype=np.float32)
+        begin_bin_value = np.round(det_start - self.size_step / 2, 3)
+        end_bin_value = np.round(det_end + self.size_step, 3)
+
+        print(f'value_0: {det_start - self.size_step / 2}')
+        print(f'value_1: {det_end + self.size_step}')
+        print(f'value_2: {self.size_step}')
+
+        bins = np.arange(begin_bin_value, end_bin_value, self.size_step, dtype=float)
+        #bins    = np.arange(det_start - self.size_step / 2, det_end + self.size_step, self.size_step, dtype=float)
         hist, _ = np.histogram(flat_pixel_address, bins=bins)
+
+        print(f'bins: {bins}')
+        print(f'histogram: {hist}')
 
         histogram_size = len(hist)
         number_of_output_parameters = 4
@@ -158,9 +171,9 @@ class Scan:
             h5f.create_dataset('metadata/final_angle', data = self.final_angle, dtype=np.float32)
             h5f.create_dataset('metadata/size_step', data = self.size_step, dtype=np.float32)
             h5f.create_dataset('metadata/number_of_steps', data = self.number_of_steps, dtype=np.float32)
-            h5f.create_dataset('metadata/output_folder', data = self.output_folder, dtype=np.float32)
-            h5f.create_dataset('metadata/scan_folder', data = self.scan_folder, dtype=np.float32)
-            h5f.create_dataset('metadata/scan_filename', data = self.scan_filename, dtype=np.float32)
+            h5f.create_dataset('metadata/output_folder', data = self.output_folder)
+            h5f.create_dataset('metadata/scan_folder', data = self.scan_folder)
+            h5f.create_dataset('metadata/scan_filename', data = self.scan_filename)
             h5f.create_dataset('metadata/det_x', data = self.det_x, dtype=np.float32)
             h5f.create_dataset('metadata/xmin', data = self.xmin, dtype=np.float32)
             h5f.create_dataset('metadata/xmax', data = self.xmax, dtype=np.float32)
@@ -168,6 +181,7 @@ class Scan:
             h5f.create_dataset('metadata/ymax', data = self.ymax, dtype=np.float32)
             h5f.create_dataset('metadata/input_mythen_lids', data = self.input_mythen_lids, dtype=np.float32)
             h5f.create_dataset('metadata/calibration_pixel', data = self.calibration_pixel, dtype=np.float32)
+            h5f.create_dataset('metadata/pixel_address', data = pixel_address, dtype=np.float32)
 
 
         return direct_beam[:,0], direct_beam[:,1], direct_beam[:,2], direct_beam[:3]
