@@ -2,6 +2,7 @@
 
 import os
 import re
+import h5py
 import time
 import uuid
 import glob
@@ -61,25 +62,37 @@ class Scan:
         self.scan_folder     = scan_folder
         self.scan_filename   = scan_filename
         self.det_x           = detector_size_x
-
-        self.xmin = xc - 1
-        self.xmax = xc + 0
-        self.ymin = yc - int(ny / 2) + 1
-        self.ymax = yc + int(ny / 2)
-
+        self.xmin            = xc - 1
+        self.xmax            = xc + 0
+        self.ymin            = yc - int(ny / 2) + 1
+        self.ymax            = yc + int(ny / 2)
         self.input_mythen_lids = input_mythen_lids
-
         self.calibration_pixel = calibration_pixel
 
     def get_volume(self) -> np.ndarray:
+        """Reads a series of TIFF files into a 3D NumPy array (volume).
+
+        This method first constructs a list of TIFF file paths based on the scan
+        parameters. It then reads the files into a NumPy array, storing the result
+        in the `self.volume` attribute.
+
+        Returns:
+            np.ndarray: A 3D NumPy array of the measured diffraction 2D images.
+
+        Raises:
+            FileNotFoundError: If any of the expected TIFF files are not found.
+            ValueError: If there are issues reading the TIFF data.
+        """
+
         self.list_of_files = get_file_list(self.number_of_steps, self.number_of_steps, self.initial_angle,
-            self.final_angle, self.scan_folder, self.scan_filename )
+                                          self.final_angle, self.scan_folder, self.scan_filename)
 
         params = [self.number_of_steps, self.ymax, self.ymin, self.det_x, self.list_of_files]
 
         self.volume = read_tif_volume(params)
 
         return self.volume
+
 
     def estatistics(self, mythen, croped_mythen, mythen_lids) -> tuple:
         """
@@ -95,7 +108,7 @@ class Scan:
             tuple: Summed intensity, mean, and standard deviation of the intensities.
         """
         # Define the nominal two theta measured
-        tth = self.initial_angle + (self.size_step / 2) + np.arange(self.number_of_steps) * self.size_step
+        tth = self.initial_angle + (self.size_step / 2) + np.arange(self.number_of_steps, dtype=np.float32) * self.size_step
         tth = np.round(tth, 9)
         print(f'tth: {tth}')
 
@@ -109,6 +122,7 @@ class Scan:
 
         det_start = min(flat_pixel_address)
         det_end   = max(flat_pixel_address)
+        print(f'det_start: {det_start}\ndet_end: {det_end}')
 
         # Calculate the histogram
         bins    = np.arange(det_start - self.size_step / 2, det_end + self.size_step, self.size_step, dtype=np.float32)
@@ -130,6 +144,32 @@ class Scan:
 
             direct_beam[index] = [tth_, int_, mean_, std_]
 
+        # Add verification if path exists. If doesn't create the path and continue the processing and add log messages
+        diffractogram_file_path = "".join([self.output_folder, self.scan_filename, '.h5'])
+        with h5py.File(diffractogram_file_path, "w") as h5f:
+            h5f.create_group("proc")
+            h5f.create_dataset('proc/tth', data=direct_beam[:,0], dtype=np.float32)
+            h5f.create_dataset('proc/intensities', data=direct_beam[:,1], dtype=np.float32)
+            h5f.create_dataset('proc/mean', data=direct_beam[:,2], dtype=np.float32)
+            h5f.create_dataset('proc/standard_deviation', data=direct_beam[:,3], dtype=np.float32)
+
+            h5f.create_group("metadata")
+            h5f.create_dataset('metadata/initial_angle', data = self.initial_angle, dtype=np.float32)
+            h5f.create_dataset('metadata/final_angle', data = self.final_angle, dtype=np.float32)
+            h5f.create_dataset('metadata/size_step', data = self.size_step, dtype=np.float32)
+            h5f.create_dataset('metadata/number_of_steps', data = self.number_of_steps, dtype=np.float32)
+            h5f.create_dataset('metadata/output_folder', data = self.output_folder, dtype=np.float32)
+            h5f.create_dataset('metadata/scan_folder', data = self.scan_folder, dtype=np.float32)
+            h5f.create_dataset('metadata/scan_filename', data = self.scan_filename, dtype=np.float32)
+            h5f.create_dataset('metadata/det_x', data = self.det_x, dtype=np.float32)
+            h5f.create_dataset('metadata/xmin', data = self.xmin, dtype=np.float32)
+            h5f.create_dataset('metadata/xmax', data = self.xmax, dtype=np.float32)
+            h5f.create_dataset('metadata/ymin', data = self.ymin, dtype=np.float32)
+            h5f.create_dataset('metadata/ymax', data = self.ymax, dtype=np.float32)
+            h5f.create_dataset('metadata/input_mythen_lids', data = self.input_mythen_lids, dtype=np.float32)
+            h5f.create_dataset('metadata/calibration_pixel', data = self.calibration_pixel, dtype=np.float32)
+
+
         return direct_beam[:,0], direct_beam[:,1], direct_beam[:,2], direct_beam[:3]
 
     def scan_main_run(self) -> tuple:
@@ -148,19 +188,14 @@ class Scan:
         # Perform the statistics calculation to return the processed data
         two_theta_scan, self.sum_of_intensities, self.mean, self.standard_deviation = self.estatistics(self.mythen_variable, self.cropped_mythen, self.mythen_lids)
 
-        return np.asarray(self.mythen_variable), np.asarray(two_theta_scan), \
-            np.asarray(self.sum_of_intensities), np.asarray(self.mean), np.asarray(self.standard_deviation)
+        return np.asarray(self.mythen_variable), np.asarray(two_theta_scan), np.asarray(self.sum_of_intensities), np.asarray(self.mean), np.asarray(self.standard_deviation)
 
 
     def mythen(self, volume: np.ndarray) -> tuple:
+        # Return the mythen matrix transposed?
         mythen        = np.sum(volume, axis = 1) #Projecting on the y/2theta plane
         open_mythen   = np.sum(mythen, axis = 0)
-        #threshold     = int( max(open_mythen) / 2 )
-        #mythen_window = np.asarray(np.nonzero(open_mythen > threshold))
-
-        #mythen_lids   = [ min(mythen_window[0]) + 10, max(mythen_window[0]) - 10 ]
         croped_mythen = mythen[ :, self.input_mythen_lids[0]:self.input_mythen_lids[1] ]
-        #mythen        = np.transpose(mythen)
 
         return mythen, croped_mythen, self.input_mythen_lids
 
