@@ -14,12 +14,12 @@ MAKEFLAGS := -j$(NUM_THREADS)
 
 # Variables
 BUILD_DIR := build
-RUNDIR=	emaDiff emaDiff/ 
+RUNDIR=	emaDiff emaDiff/
 
 all: clean install
 
 clean:
-	rm -fr build/ _skbuild/ *.egg-info/ dist/ *~
+	rm -fr build/ _skbuild/ *.egg-info/ dist/ *~ emaDiff/._* emaDiff/dif/._* emaDiff/dif/._* emaDiff/cli/._* .DS_Store
 	@for j in ${RUNDIR}; do rm -rf $$j/*.pyc; rm -rf $$j/*~; done
 
 install:
