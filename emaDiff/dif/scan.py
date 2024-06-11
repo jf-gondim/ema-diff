@@ -17,6 +17,7 @@ from tqdm import tqdm
 from .read_tiff import read_tif_volume
 from .calibration import Calibration
 from .io import get_file_list
+from .._version import __version__
 
 class Scan:
     """
@@ -182,6 +183,8 @@ class Scan:
             h5f.create_dataset('metadata/input_mythen_lids', data = self.input_mythen_lids, dtype=np.float32)
             h5f.create_dataset('metadata/calibration_pixel', data = self.calibration_pixel, dtype=np.float32)
             h5f.create_dataset('metadata/pixel_address', data = pixel_address, dtype=np.float32)
+            h5f.create_dataset('metadata/datetime', data = time.strftime("%Y/%m/%d - %H:%M:%S"))
+            h5f.create_dataset('metadata/software_version', data = __version__[:5])
 
 
         return direct_beam[:,0], direct_beam[:,1], direct_beam[:,2], direct_beam[:3]
