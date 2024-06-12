@@ -105,6 +105,7 @@ def calibration(
     xdet : Annotated[int, Argument(..., metavar="xdet", help="Size of the detector in the x axis in pixels")],
     ydet : Annotated[int, Argument(..., metavar="ydet", help="Size of the detector in the y axis in pixels")],
     lids_border : Annotated[int, Argument(..., metavar="lids_border", help="Size of the border to crop the Mythen matrix")],
+    output_file_path: Annotated[str, Argument(..., metavar="output_file_path", help="Absolute path to save the calibration file")]
 ) -> None:
 
     """CLI function that apply the calibration pipeline.
@@ -168,9 +169,10 @@ def calibration(
                                        ny,
                                        cfo,
                                        cfi,
-                                       xdet=xdet,
-                                       ydet=ydet,
-                                       lids_border=lids_border)
+                                       xdet,
+                                       ydet,
+                                       lids_border,
+                                       output_file_path)
 
 @app.command(name="scan", help="Function that generates the diffractogram for all Pilatus scan data.")
 def scan(

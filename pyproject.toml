@@ -44,6 +44,7 @@ dependencies = [
     "numpy>=1.24.4",
     "wheel==0.42.0",
     "Faker==23.2.1",
+    "rich==12.6.0",
     "typer==0.9.0",
     "setuptools>=64.0.0",
     "matplotlib==3.7.5",
