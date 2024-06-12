@@ -84,7 +84,7 @@ class Calibration:
         # Define any value of the lids_border as default?
         # The previous value was 5
         self.mythen_lids = [ min(mythen_window[0]) + self.lids_border, max(mythen_window[0]) - self.lids_border ]
-        print(f'mythen_lids_calibration: {self.mythen_lids}')
+        logger.info(f'Mythen lids values defined are: {self.mythen_lids}')
 
         # Apply windowing to Mythen data
         mythen = mythen[:, self.mythen_lids[0]:self.mythen_lids[1]]

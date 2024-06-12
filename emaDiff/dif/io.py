@@ -48,7 +48,7 @@ def get_file_list(steps: int,
                   c_Folder: str,
                   c_Filename: str) -> list:
     """
-    Runs a calibration scan to gather a list of file paths.
+    Runs a routine to gather a list of file paths.
 
     This method sets up and executes a calibration scan based on the specified parameters:
     - Computes the end angle based on the start angle, number of steps, and step size.
@@ -62,9 +62,7 @@ def get_file_list(steps: int,
     Raises:
         SystemExit: If the number of found TIFF files does not match the expected number of steps.
     """
-    print('-----------------')
-    print('RUNNING CALIBRATION SCAN...')
-    print('-----------------')
+    logger.info('Running calibration scan!')
 
     start_id   = 0
     end_id     = steps - 1
@@ -80,14 +78,15 @@ def get_file_list(steps: int,
 
     # Verify and set end_angle
     if end_angle != end_angle:
-        print(f'End Angle value is incompatible with the setted one. Suggested value: {end_angle}')
+        logger.info(f'End Angle value is incompatible with the setted one. Suggested value: {end_angle}')
     else:
         end_angle = end_angle
 
     # Check if number of files matches expected steps
     if len(filelist) != steps:
-        raise SystemExit('!!!!!!!!! PICTURES MISSING !!!!!!!!!')
+        logger.error('PICTURES MISSING!!')
+        sys.exit()
     else:
-        print('Calibration Scan done successfully.')
+        logger.info('Calibration Scan done successfully.')
 
     return filelist
