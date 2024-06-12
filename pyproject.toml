@@ -39,7 +39,7 @@ dependencies = [
     "h5py==3.10.0",
     "scipy>=1.7.1",
     "ninja>=1.10.2",
-    "pandas==2.2.2",
+    "pandas>=1.4.4",
     "cmake>=3.20.0",
     "numpy>=1.24.4",
     "wheel==0.42.0",
@@ -61,4 +61,4 @@ version_file = "emaDiff/_version.py"
 version_scheme = "python-simplified-semver"
 
 [project.scripts]
-emaDiff = "emaDiff.cli.cli:app"
+ema-diff = "emaDiff.cli.cli:app"

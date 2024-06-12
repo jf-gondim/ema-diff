@@ -23,4 +23,4 @@ clean:
 	@for j in ${RUNDIR}; do rm -rf $$j/*.pyc; rm -rf $$j/*~; done
 
 install:
-	python3 setup.py install --user
+	pip install .

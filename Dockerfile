@@ -18,7 +18,7 @@ RUN apt-add-repository ppa:deadsnakes/ppa
 
 # Install multiple Python versions, pip, and venv
 RUN apt update && \
-    apt install -y python3.8-dev python3.9-dev python3.10-dev python3.11-dev python3.12-dev \
+    apt install -y python3.8-dev \
     python3-pip python3-venv &&\
     rm -rf /var/lib/apt/lists/*    # Clean up package cache
 
