@@ -189,7 +189,7 @@ def scan(
     scan_filename : Annotated[str, Argument(..., metavar="scan_filename", help="File name of the scan to generate the diffractogram")],
     ny : Annotated[int, Argument(..., metavar="ny", help="y axis width to crop the scan TIFF file")],
     detector_size_x : Annotated[int, Argument(..., metavar="detector_size_x", help="Size of the detector in the x axis in pixels")],
-    calibration_pixel_file_path : Annotated[int, Argument(..., metavar="calibration_pixel_file_path", help="Size of the border to crop the Mythen matrix")],
+    calibration_pixel_file_path : Annotated[str, Argument(..., metavar="calibration_pixel_file_path", help="Size of the border to crop the Mythen matrix")],
 ) -> None:
     """CLI function that apply the scan pipeline and generate the diffractogram.
 
