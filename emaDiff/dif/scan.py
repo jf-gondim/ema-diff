@@ -36,7 +36,7 @@ class Scan:
                  scan_filename: str,
                  ny: int,
                  detector_size_x: int,
-                 input_mythen_lids: list,
+                 input_mythen_lids: np.ndarray,
                  calibration_pixel: np.ndarray):
         """
         Initializes the Scan class with the given parameters.

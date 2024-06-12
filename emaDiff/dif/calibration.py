@@ -149,4 +149,4 @@ class Calibration:
         # Calculate the vector of calibration to use as input in the Scan class
         calibration_pixel_vector = self.calibration_pixel(self.detector)
 
-        return self.detector, calibration_pixel_vector, self.volume
+        return self.detector, calibration_pixel_vector, self.volume, self.mythen_lids

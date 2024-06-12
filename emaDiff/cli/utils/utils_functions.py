@@ -20,7 +20,7 @@ def calibration_cli(start_angle: float,
 
 
     calib = Calibration(start_angle, end_angle, step_size, steps, xc, yc, ny, cfo, cfi, xdet, ydet, lids_border)
-    calibration_mythen_full_matrix, calibration_vector, calibration_volume = calib.calibration_main_run()
+    calibration_mythen_full_matrix, calibration_vector, calibration_volume, mythen_lids= calib.calibration_main_run()
 
     calibration_hdf5_abs_file_path = "".join([output_file_path, cfi, "proc.h5"])
 
@@ -29,6 +29,7 @@ def calibration_cli(start_angle: float,
         h5f.create_dataset("data/mythen", data=calibration_mythen_full_matrix, dtype=np.float32)
         h5f.create_dataset("data/calibration_vector", data=calibration_vector, dtype=np.float32)
         h5f.create_dataset("data/volume", data=calibration_volume, dtype=np.float32)
+        h5f.create_dataset("data/mythen_lids", data=mythen_lids, dtype=np.int16)
 
 
 def scan_cli(initial_angle: float,
@@ -42,7 +43,7 @@ def scan_cli(initial_angle: float,
              scan_filename: str,
              ny: int,
              detector_size_x: int,
-             input_mythen_lids: list,
+             input_mythen_lids: np.ndarray,
              calibration_pixel: np.ndarray):
 
     scan = Scan(initial_angle,
@@ -58,4 +59,5 @@ def scan_cli(initial_angle: float,
                 detector_size_x,
                 input_mythen_lids,
                 calibration_pixel)
+
     xrd_mythen_matrix, xrd_tth, xrd_intensity, xrd_mean, xrd_std = scan.scan_main_run()

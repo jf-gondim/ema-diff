@@ -3,6 +3,8 @@ import sys
 import h5py
 import numpy as np
 
+import typer
+
 from rich import print
 from typing_extensions import Annotated
 from typing import List, Optional, Tuple
@@ -187,7 +189,6 @@ def scan(
     scan_filename : Annotated[str, Argument(..., metavar="scan_filename", help="File name of the scan to generate the diffractogram")],
     ny : Annotated[int, Argument(..., metavar="ny", help="y axis width to crop the scan TIFF file")],
     detector_size_x : Annotated[int, Argument(..., metavar="detector_size_x", help="Size of the detector in the x axis in pixels")],
-    input_mythen_lids : Annotated[Tuple[int, int], Argument(..., metavar="input_mythen_lids", help="Size of the detector in the y axis in pixels")],
     calibration_pixel_file_path : Annotated[int, Argument(..., metavar="calibration_pixel_file_path", help="Size of the border to crop the Mythen matrix")],
 ) -> None:
     """CLI function that apply the scan pipeline and generate the diffractogram.
@@ -200,7 +201,7 @@ def scan(
     ```{.sh title=output command}
     Usage: ema-diff scan_ema [OPTIONS] initial_angle final_angle size_steps
                               number_of_steps xc yc output_folder scan_folder
-                              scan_filename ny detector_size_x input_mythen_lids
+                              scan_filename ny detector_size_x lids
                               calibration_pixel_file_path
 
      Function that generates the diffractogram for all Pilatus scan data.
@@ -246,6 +247,7 @@ def scan(
     """
     with h5py.File(calibration_pixel_file_path, "r") as h5f:
        calibration_pixel_vector = h5f["data/calibration_vector"][:].astype(np.float32)
+       lids = h5f["data/mythen_lids"][:].astype(np.int16)
 
     scan_calibration = scan_cli(initial_angle,
                                 final_angle,
@@ -258,7 +260,7 @@ def scan(
                                 scan_filename,
                                 ny,
                                 detector_size_x,
-                                input_mythen_lids,
+                                lids,
                                 calibration_pixel_vector)
 
 if __name__ == "__main__":
