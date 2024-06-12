@@ -1,4 +1,6 @@
+import h5py
 import numpy as np
+
 from ...dif.calibration import Calibration
 from ...dif.scan import Scan
 
@@ -17,6 +19,12 @@ def calibration_cli(start_angle: float,
 
     calib = Calibration(start_angle, end_angle, step_size, steps, xc, yc, ny, cfo, cfi, xdet, ydet, lids_border)
     calibration_mythen_full_matrix, calibration_vector, calibration_volume = calib.calibration_main_run()
+
+    with h5py.File(output_file_path, "w") as h5f:
+        h5f.create_group("data")
+        h5f.create_dataset("data/mythen", data=calibration_mythen_full_matrix, dtype=np.float32)
+        h5f.create_dataset("data/calibration_vector", data=calibration_vector, dtype=np.float32)
+        h5f.create_dataset("data/volume", data=calibration_volume, dtype=np.float32)
 
 
 def scan_cli(initial_angle: float,

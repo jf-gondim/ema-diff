@@ -159,7 +159,7 @@ class Scan:
             direct_beam[index] = [tth_, int_, mean_, std_]
 
         # Add verification if path exists. If doesn't create the path and continue the processing and add log messages
-        diffractogram_file_path = "".join([self.output_folder, self.scan_filename, '.h5'])
+        diffractogram_file_path = "".join([self.output_folder, self.scan_filename, 'proc.h5'])
         with h5py.File(diffractogram_file_path, "w") as h5f:
             h5f.create_group("proc")
             h5f.create_dataset('proc/tth', data=direct_beam[:,0], dtype=np.float32)

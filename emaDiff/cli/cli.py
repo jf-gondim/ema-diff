@@ -1,5 +1,6 @@
 import os
 import sys
+import h5py
 import numpy as np
 
 from rich import print
@@ -241,6 +242,9 @@ def scan(
         volume (np.ndarray): Volume of all TIFF image files in a 3D numpy array.
 
     """
+    with h5py.File(calibration_pixel_file_path, "r") as h5f:
+       calibration_pixel_vector = h5f["data/calibration_vector"][:].astype(np.float32)
+
     scan_calibration = scan_cli(initial_angle,
                                 final_angle,
                                 size_step,
@@ -253,7 +257,7 @@ def scan(
                                 ny,
                                 detector_size_x,
                                 input_mythen_lids,
-                                calibration_pixel_file_path)
+                                calibration_pixel_vector)
 
 if __name__ == "__main__":
     app()
