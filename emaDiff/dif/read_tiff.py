@@ -10,6 +10,8 @@ import PIL.Image as Image
 import multiprocessing as mp
 import matplotlib.pyplot as plt
 
+from .io import logger
+
 def read_tif_volume(params):
     """
     Reads a volume of .tiff files in parallel.

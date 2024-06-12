@@ -12,7 +12,7 @@ import multiprocessing as mp
 
 from scipy.signal import find_peaks
 
-from .io import get_file_list
+from .io import get_file_list, logger
 from .read_tiff import read_tif_volume
 
 
@@ -135,18 +135,24 @@ class Calibration:
             SomeException: An exception that might occur during file operations or computations.
         """
         # Create the list of all calibration files
+        logger.info('Generating list of files.')
         self.list_of_files = get_file_list(self.steps, self.step_size, self.start_angle, self.end_angle, self.c_Folder, self.c_Filename )
 
         # Define the parameters to read the multiple scan files measured at the beamline
         self.params = [self.steps, self.ymax, self.ymin, self.xdet, self.list_of_files]
 
         # Initialize volume and detector
+        logger.info('Reading TIFF files and generating volume...')
         self.volume = read_tif_volume(self.params)
 
         # Calculate the detector matriz as if it was measured using the Mythen linear detector
+        logger.info('Calculating Mythen matrix.')
         self.detector = self.mythen(self.volume)
 
         # Calculate the vector of calibration to use as input in the Scan class
+        logger.info('Calculating calibration vector using the Mythen matrix...')
         calibration_pixel_vector = self.calibration_pixel(self.detector)
+
+        logger.info('Finished the calibration pipeline for the Pilatus.')
 
         return self.detector, calibration_pixel_vector, self.volume, self.mythen_lids

@@ -5,6 +5,8 @@ import numpy as np
 
 import typer
 
+from ..dif.io import logger
+
 from rich import print
 from typing_extensions import Annotated
 from typing import List, Optional, Tuple
@@ -201,7 +203,7 @@ def scan(
     ```{.sh title=output command}
     Usage: ema-diff scan_ema [OPTIONS] initial_angle final_angle size_steps
                               number_of_steps xc yc output_folder scan_folder
-                              scan_filename ny detector_size_x lids
+                              scan_filename ny detector_size_x
                               calibration_pixel_file_path
 
      Function that generates the diffractogram for all Pilatus scan data.
@@ -218,7 +220,6 @@ def scan(
     │ *    scan_filename                    scan_filename                File name of the scan to generate the diffractogram [default: None] [required]                                     │
     │ *    ny                               ny                           y axis width to crop the scan TIFF file [default: None] [required]                                                 │
     │ *    detector_size_x                  detector_size_x              Size of the detector in the x axis in pixels [default: None] [required]                                            │
-    │ *    input_mythen_lids                input_mythen_lids            Size of the detector in the y axis in pixels [default: None] [required]                                            │
     │ *    calibration_pixel_file_path      calibration_pixel_file_path  Size of the border to crop the Mythen matrix [default: None] [required]                                            │
     ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
     ╭─ Options ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -239,7 +240,7 @@ def scan(
         scan_filename (str): Filename of the scan file.
         ny (int): Number of y pixels.
         detector_size_x (int): Size of the detector in x-dimension.
-        lids_border (int): Size of the border to crop the Mythen matrix.
+        calibration_pixel_file_path (str): Absolute path of the HDF5 calibration file.
     Returns:
         pixel_theta (np.ndarray): Calibrated pixel theta values.
         volume (np.ndarray): Volume of all TIFF image files in a 3D numpy array.

@@ -12,6 +12,35 @@ import multiprocessing as mp
 
 from .read_tiff import read_tif_volume
 
+'''----------------------------------------------'''
+import sys
+import logging
+
+# Define the log level for the console
+console_log_level = logging.DEBUG
+
+# Create a logger with the module name
+logger = logging.getLogger(__name__)
+
+# Create a handler for the console (stdout)
+console_handler = logging.StreamHandler(sys.stdout)
+
+# Define the format of the log messages
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+
+# Add the handler to the logger
+logger.addHandler(console_handler)
+
+# Set the log level for the logger and the handler
+logger.setLevel(logging.DEBUG)
+console_handler.setLevel(console_log_level)
+
+# Constant for the debug level (not used in the current code, but kept as a reference)
+DEBUG = logging.DEBUG
+
+'''----------------------------------------------'''
+
 def get_file_list(steps: int,
                   step_size: float,
                   start_angle: float,
