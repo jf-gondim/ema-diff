@@ -1,7 +1,7 @@
 from ._version import __version__
 
 try:
-    from .diftypes import *
+    from .ematypes import *
     from .dif import *
     from .cli import *
 
