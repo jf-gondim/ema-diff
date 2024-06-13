@@ -21,7 +21,6 @@ class Calibration:
     def __init__(self,
                  start_angle: float,
                  end_angle: float,
-                 step_size: float,
                  steps: int,
                  xc: int,
                  yc: int,
@@ -42,7 +41,6 @@ class Calibration:
         self.steps       = steps
         self.start_angle = start_angle
         self.end_angle   = end_angle
-        self.step_size   = step_size
         self.c_Folder    = cfo
         self.c_Filename  = cfi
         self.lids_border = lids_border
@@ -136,7 +134,7 @@ class Calibration:
         """
         # Create the list of all calibration files
         logger.info('Generating list of files.')
-        self.list_of_files = get_file_list(self.steps, self.step_size, self.start_angle, self.end_angle, self.c_Folder, self.c_Filename )
+        self.list_of_files = get_file_list(self.steps, self.start_angle, self.end_angle, self.c_Folder, self.c_Filename )
 
         # Define the parameters to read the multiple scan files measured at the beamline
         self.params = [self.steps, self.ymax, self.ymin, self.xdet, self.list_of_files]

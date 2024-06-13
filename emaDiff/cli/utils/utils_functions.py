@@ -6,7 +6,6 @@ from ...dif.scan import Scan
 
 def calibration_cli(start_angle: float,
                     end_angle: float,
-                    step_size: float,
                     steps: int,
                     xc: int,
                     yc: int,
@@ -19,7 +18,7 @@ def calibration_cli(start_angle: float,
                     output_file_path: str):
 
 
-    calib = Calibration(start_angle, end_angle, step_size, steps, xc, yc, ny, cfo, cfi, xdet, ydet, lids_border)
+    calib = Calibration(start_angle, end_angle, steps, xc, yc, ny, cfo, cfi, xdet, ydet, lids_border)
     calibration_mythen_full_matrix, calibration_vector, calibration_volume, mythen_lids= calib.calibration_main_run()
 
     calibration_hdf5_abs_file_path = "".join([output_file_path, cfi, "proc.h5"])
@@ -34,7 +33,6 @@ def calibration_cli(start_angle: float,
 
 def scan_cli(initial_angle: float,
              final_angle: float,
-             size_step: float,
              number_of_steps: int,
              xc: int,
              yc: int,
@@ -48,7 +46,6 @@ def scan_cli(initial_angle: float,
 
     scan = Scan(initial_angle,
                 final_angle,
-                size_step,
                 number_of_steps,
                 xc,
                 yc,

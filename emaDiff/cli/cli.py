@@ -99,7 +99,6 @@ def __cli_commands(
 def calibration(
     start_angle : Annotated[float, Argument(..., metavar="start_angle", help="First angle of the diffraction scan")],
     end_angle : Annotated[float, Argument(..., metavar="end_angle", help="Final angle of the diffraction scan")],
-    step_size : Annotated[float, Argument(..., metavar="step_size", help="Size of the angle step performed in the scan")],
     steps : Annotated[int, Argument(..., metavar="steps", help="Number of steps performed in the scan")],
     xc : Annotated[int, Argument(..., metavar="xc", help="Center of the detector in the x axis")],
     yc : Annotated[int, Argument(..., metavar="yc", help="Center of the detector in the y axis")],
@@ -120,7 +119,7 @@ def calibration(
     ```
 
     ```{.sh title=output command}
-    Usage: ema-diff calibration_ema [OPTIONS] start_angle end_angle step_size
+    Usage: ema-diff calibration_ema [OPTIONS] start_angle end_angle
                                      steps xc yc ny cfo cfi xdet ydet lids_border
 
      Calibration function for all Pilatus scan data.
@@ -128,7 +127,6 @@ def calibration(
     ╭─ Arguments ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
     │ *    start_angle      start_angle  First angle of the diffraction scan [default: None] [required]                                                                                     │
     │ *    end_angle        end_angle    Final angle of the diffraction scan [default: None] [required]                                                                                     │
-    │ *    step_size        step_size    Size of the angle step performed in the scan [default: None] [required]                                                                            │
     │ *    steps            steps        Number of steps performed in the scan [default: None] [required]                                                                                   │
     │ *    xc               xc           Center of the detector in the x axis [default: None] [required]                                                                                    │
     │ *    yc               yc           Center of the detector in the y axis [default: None] [required]                                                                                    │
@@ -148,7 +146,6 @@ def calibration(
     Args:
         initial_angle (float): Initial angle for the scan.
         final_angle (float): Final angle for the scan.
-        size_step (float): Step size for each scan increment.
         number_of_steps (int): Number of steps in the scan.
         pixel_theta (np.ndarray): Pixel theta values.
         xc (int): X-coordinate of the center.
@@ -166,7 +163,6 @@ def calibration(
     """
     scan_calibration = calibration_cli(start_angle,
                                        end_angle,
-                                       step_size,
                                        steps,
                                        xc,
                                        yc,
@@ -182,7 +178,6 @@ def calibration(
 def scan(
     initial_angle : Annotated[float, Argument(..., metavar="initial_angle", help="First angle of the diffraction scan")],
     final_angle : Annotated[float, Argument(..., metavar="final_angle", help="Final angle of the diffraction scan")],
-    size_step : Annotated[float, Argument(..., metavar="size_steps", help="Size of the angle step performed in the scan")],
     number_of_steps : Annotated[int, Argument(..., metavar="number_of_steps", help="Number of steps performed in the scan")],
     xc : Annotated[int, Argument(..., metavar="xc", help="Center of the detector in the x axis")],
     yc : Annotated[int, Argument(..., metavar="yc", help="Center of the detector in the y axis")],
@@ -211,7 +206,6 @@ def scan(
     ╭─ Arguments ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
     │ *    initial_angle                    initial_angle                First angle of the diffraction scan [default: None] [required]                                                     │
     │ *    final_angle                      final_angle                  Final angle of the diffraction scan [default: None] [required]                                                     │
-    │ *    size_step                        size_steps                   Size of the angle step performed in the scan [default: None] [required]                                            │
     │ *    number_of_steps                  number_of_steps              Number of steps performed in the scan [default: None] [required]                                                   │
     │ *    xc                               xc                           Center of the detector in the x axis [default: None] [required]                                                    │
     │ *    yc                               yc                           Center of the detector in the y axis [default: None] [required]                                                    │
@@ -230,7 +224,6 @@ def scan(
     Args:
         initial_angle (float): Initial angle for the scan.
         final_angle (float): Final angle for the scan.
-        size_step (float): Step size for each scan increment.
         number_of_steps (int): Number of steps in the scan.
         pixel_theta (np.ndarray): Pixel theta values.
         xc (int): X-coordinate of the center.
@@ -252,7 +245,6 @@ def scan(
 
     scan_calibration = scan_cli(initial_angle,
                                 final_angle,
-                                size_step,
                                 number_of_steps,
                                 xc,
                                 yc,

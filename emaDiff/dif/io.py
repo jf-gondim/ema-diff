@@ -20,7 +20,7 @@ import logging
 console_log_level = logging.DEBUG
 
 # Create a logger with the module name
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('emaDiff')
 
 # Create a handler for the console (stdout)
 console_handler = logging.StreamHandler(sys.stdout)
@@ -42,7 +42,6 @@ DEBUG = logging.DEBUG
 '''----------------------------------------------'''
 
 def get_file_list(steps: int,
-                  step_size: float,
                   start_angle: float,
                   end_angle: float,
                   c_Folder: str,
@@ -67,6 +66,7 @@ def get_file_list(steps: int,
     start_id   = 0
     end_id     = steps - 1
     number_of_points = end_id - start_id + 1
+    step_size = ( np.abs(start_angle) - end_angle ) / steps
     scan_range = number_of_points * step_size
     end_angle  = start_angle + scan_range
     folder     = c_Folder

@@ -27,7 +27,6 @@ class Scan:
     def __init__(self,
                  initial_angle: float,
                  final_angle: float,
-                 size_step: float,
                  number_of_steps: int,
                  xc: int,
                  yc: int,
@@ -57,7 +56,7 @@ class Scan:
         """
         self.initial_angle   = initial_angle
         self.final_angle     = final_angle
-        self.size_step       = size_step
+        self.size_step       = (final_angle - initial_angle) / number_of_steps
         self.number_of_steps = number_of_steps
         self.output_folder   = output_folder
         self.scan_folder     = scan_folder
@@ -85,11 +84,12 @@ class Scan:
             ValueError: If there are issues reading the TIFF data.
         """
 
-        self.list_of_files = get_file_list(self.number_of_steps, self.number_of_steps, self.initial_angle,
-                                          self.final_angle, self.scan_folder, self.scan_filename)
+        logger.info('Generating list of files.')
+        self.list_of_files = get_file_list(self.number_of_steps, self.initial_angle, self.final_angle, self.scan_folder, self.scan_filename)
 
         params = [self.number_of_steps, self.ymax, self.ymin, self.det_x, self.list_of_files]
 
+        logger.info('Reading TIFF files and generating volume...')
         self.volume = read_tif_volume(params)
 
         return self.volume
@@ -112,35 +112,36 @@ class Scan:
         tth = self.initial_angle + (self.size_step / 2) + np.arange(self.number_of_steps, dtype=np.float32) * self.size_step
         # Round to 4 or 5 values
         tth = np.round(tth, 3)
-        print(f'tth: {tth}')
+        logger.info(f'Two theta generated values: {tth[0]} and {tth[-1]}')
 
         # Perform the theta to pixel mapping using the calibration_pixel vector as input calculated in the `Calibration` class
+        logger.info('Calculating the pixel address vector mapping...')
         pixel_address = get_pixel_address(self.calibration_pixel, tth, self.number_of_steps)
         # Round pixel_address values?
         pixel_address = np.round(pixel_address[:, mythen_lids[0]:mythen_lids[1]], 3)
-        print(f'pixel address: {pixel_address}')
+        #logger.info(f'Calculated pixel addresses: [{pixel_address[:3]} ... {pixel_address[:-4]}]')
 
         flat_pixel_address = pixel_address.flatten()
         flat_croped_mythen = croped_mythen.flatten()
 
         det_start = np.round(min(flat_pixel_address), 3)
         det_end   = np.round(max(flat_pixel_address), 3)
-        print(f'det_start: {det_start:.3f}\ndet_end: {det_end:.3f}')
+        logger.info(f'det_start: {det_start:.3f} - det_end: {det_end:.3f}')
 
         # Calculate the histogram
         begin_bin_value = np.round(det_start - self.size_step / 2, 3)
         end_bin_value = np.round(det_end + self.size_step, 3)
 
-        print(f'value_0: {det_start - self.size_step / 2}')
-        print(f'value_1: {det_end + self.size_step}')
-        print(f'value_2: {self.size_step}')
+        logger.info(f'Start bin value: {det_start - self.size_step / 2}')
+        logger.info(f'End bin value: {det_end + self.size_step}')
+        logger.info(f'Bin step size: {self.size_step}')
 
         bins = np.arange(begin_bin_value, end_bin_value, self.size_step, dtype=float)
-        #bins    = np.arange(det_start - self.size_step / 2, det_end + self.size_step, self.size_step, dtype=float)
+        #bins = np.arange(det_start - self.size_step / 2, det_end + self.size_step, self.size_step, dtype=float)
         hist, _ = np.histogram(flat_pixel_address, bins=bins)
 
-        print(f'bins: {bins}')
-        print(f'histogram: {hist}')
+        logger.info(f'bins: {bins}')
+        logger.info(f'histogram: {hist}')
 
         histogram_size = len(hist)
         number_of_output_parameters = 4
@@ -186,6 +187,7 @@ class Scan:
             h5f.create_dataset('metadata/datetime', data = time.strftime("%Y/%m/%d - %H:%M:%S"))
             h5f.create_dataset('metadata/software_version', data = __version__[:5])
 
+        logger.info('Finished saving processed data.')
 
         return direct_beam[:,0], direct_beam[:,1], direct_beam[:,2], direct_beam[:3]
 
@@ -203,7 +205,10 @@ class Scan:
         self.mythen_variable, self.cropped_mythen, self.mythen_lids = self.mythen(self.volume)
 
         # Perform the statistics calculation to return the processed data
+        logger.info('Start to generate the diffractogram...')
         two_theta_scan, self.sum_of_intensities, self.mean, self.standard_deviation = self.estatistics(self.mythen_variable, self.cropped_mythen, self.mythen_lids)
+
+        logger.info('Finished scan pipeline and data processing!')
 
         return np.asarray(self.mythen_variable), np.asarray(two_theta_scan), np.asarray(self.sum_of_intensities), np.asarray(self.mean), np.asarray(self.standard_deviation)
 
