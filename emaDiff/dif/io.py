@@ -4,13 +4,15 @@ import os
 import re
 import uuid
 import glob
-
+import h5py
+import time
 import numpy as np
 import PIL.Image as Image
 import SharedArray as sa
 import multiprocessing as mp
 
 from .read_tiff import read_tif_volume
+from .._version import __version__
 
 '''----------------------------------------------'''
 import sys
@@ -90,3 +92,32 @@ def get_file_list(steps: int,
         logger.info('Calibration Scan done successfully.')
 
     return filelist
+
+def save_scan_data(xrd_matrix, dic):
+    # Add verification if path exists. If doesn't create the path and continue the processing and add log messages
+    diffractogram_file_path = "".join([dic['output_folder'], dic['scan_filename'], 'proc.h5'])
+    with h5py.File(diffractogram_file_path, "w") as h5f:
+        h5f.create_group("proc")
+        h5f.create_dataset('proc/tth', data=xrd_matrix[:,0], dtype=np.float32)
+        h5f.create_dataset('proc/intensities', data=xrd_matrix[:,1], dtype=np.float32)
+        h5f.create_dataset('proc/mean', data=xrd_matrix[:,2], dtype=np.float32)
+        h5f.create_dataset('proc/standard_deviation', data=xrd_matrix[:,3], dtype=np.float32)
+
+        h5f.create_group("metadata")
+        h5f.create_dataset('metadata/initial_angle', data = dic['initial_angle'], dtype=np.float32)
+        h5f.create_dataset('metadata/final_angle', data = dic['final_angle'], dtype=np.float32)
+        h5f.create_dataset('metadata/size_step', data = dic['size_step'], dtype=np.float32)
+        h5f.create_dataset('metadata/number_of_steps', data = dic['number_of_steps'], dtype=np.float32)
+        h5f.create_dataset('metadata/output_folder', data = dic['output_folder'])
+        h5f.create_dataset('metadata/scan_folder', data = dic['scan_folder'])
+        h5f.create_dataset('metadata/scan_filename', data = dic['scan_filename'])
+        h5f.create_dataset('metadata/det_x', data = dic['det_x'], dtype=np.float32)
+        h5f.create_dataset('metadata/xmin', data = dic['xmin'], dtype=np.float32)
+        h5f.create_dataset('metadata/xmax', data = dic['xmax'], dtype=np.float32)
+        h5f.create_dataset('metadata/ymin', data = dic['ymin'], dtype=np.float32)
+        h5f.create_dataset('metadata/ymax', data = dic['ymax'], dtype=np.float32)
+        h5f.create_dataset('metadata/input_mythen_lids', data = dic['input_mythen_lids'], dtype=np.float32)
+        h5f.create_dataset('metadata/calibration_pixel', data = dic['calibration_pixel'], dtype=np.float32)
+        h5f.create_dataset('metadata/pixel_address', data = dic['pixel_address'], dtype=np.float32)
+        h5f.create_dataset('metadata/datetime', data = time.strftime("%m/%d/%Y - %H:%M:%S"))
+        h5f.create_dataset('metadata/software_version', data = __version__[:5])
