@@ -16,8 +16,11 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from .read_tiff import read_tif_volume
 from .calibration import Calibration
-from .io import get_file_list, logger
+from .io import get_file_list, logger, save_scan_data
+from .parallel_scan import _get_xrd_batch
 from .._version import __version__
+
+NTHREADS = mp.cpu_count()
 
 class Scan:
     """
@@ -146,50 +149,54 @@ class Scan:
         histogram_size = len(hist)
         number_of_output_parameters = 4
 
-        direct_beam = np.zeros([histogram_size, number_of_output_parameters], dtype=np.float32)
+        # Start multiprocessing parallel histogram
+        xrd_name = str(uuid.uuid4())
+        logger.info(f'XRD name: {xrd_name}')
 
-        for index in range(len(hist)):
-            min_       = bins[index]
-            max_       = bins[index + 1]
-            tth_       = min_
-            tth_index  = np.where(np.logical_and(flat_pixel_address >= min_, flat_pixel_address <= max_))[0]
-            int_       = np.sum(flat_croped_mythen[tth_index])
-            mean_      = np.mean(flat_croped_mythen[tth_index])
-            std_       = np.std(flat_croped_mythen[tth_index])
+        try:
+            sa.delete(xrd_name)
+        except:
+            pass
 
-            direct_beam[index] = [tth_, int_, mean_, std_]
+        logger.info('Creating XRD shared array...')
+        xrd_matrix = sa.create(xrd_name, [histogram_size, number_of_output_parameters], dtype=np.float32)
+        params = [xrd_matrix, NTHREADS, histogram_size, bins, flat_pixel_address, flat_croped_mythen]
 
-        # Add verification if path exists. If doesn't create the path and continue the processing and add log messages
-        diffractogram_file_path = "".join([self.output_folder, self.scan_filename, '_proc.h5'])
-        with h5py.File(diffractogram_file_path, "w") as h5f:
-            h5f.create_group("proc")
-            h5f.create_dataset('proc/tth', data=direct_beam[:,0], dtype=np.float32)
-            h5f.create_dataset('proc/intensities', data=direct_beam[:,1], dtype=np.float32)
-            h5f.create_dataset('proc/mean', data=direct_beam[:,2], dtype=np.float32)
-            h5f.create_dataset('proc/standard_deviation', data=direct_beam[:,3], dtype=np.float32)
+        time0 = time.time()
+        _get_xrd_batch(params)
+        time1 = time.time()
 
-            h5f.create_group("metadata")
-            h5f.create_dataset('metadata/initial_angle', data = self.initial_angle, dtype=np.float32)
-            h5f.create_dataset('metadata/final_angle', data = self.final_angle, dtype=np.float32)
-            h5f.create_dataset('metadata/size_step', data = self.size_step, dtype=np.float32)
-            h5f.create_dataset('metadata/number_of_steps', data = self.number_of_steps, dtype=np.float32)
-            h5f.create_dataset('metadata/output_folder', data = self.output_folder)
-            h5f.create_dataset('metadata/scan_folder', data = self.scan_folder)
-            h5f.create_dataset('metadata/scan_filename', data = self.scan_filename)
-            h5f.create_dataset('metadata/det_x', data = self.det_x, dtype=np.float32)
-            h5f.create_dataset('metadata/xmin', data = self.xmin, dtype=np.float32)
-            h5f.create_dataset('metadata/xmax', data = self.xmax, dtype=np.float32)
-            h5f.create_dataset('metadata/ymin', data = self.ymin, dtype=np.float32)
-            h5f.create_dataset('metadata/ymax', data = self.ymax, dtype=np.float32)
-            h5f.create_dataset('metadata/input_mythen_lids', data = self.input_mythen_lids, dtype=np.float32)
-            h5f.create_dataset('metadata/calibration_pixel', data = self.calibration_pixel, dtype=np.float32)
-            h5f.create_dataset('metadata/pixel_address', data = pixel_address, dtype=np.float32)
-            h5f.create_dataset('metadata/datetime', data = time.strftime("%Y/%m/%d - %H:%M:%S"))
-            h5f.create_dataset('metadata/software_version', data = __version__[:5])
+        logger.info(f"Total time of execution of parallel XRD: {time1 - time0}s")
+        logger.info(f"XRD matrix shape: {xrd_matrix.shape}")
 
+        logger.info('Deleting shared array process...')
+        sa.delete(xrd_name)
+
+        xrd_dic = {
+            'output_folder': self.output_folder,
+            'scan_filename': self.scan_filename,
+            'initial_angle': self.initial_angle,
+            'final_angle': self.final_angle,
+            'size_step': self.size_step,
+            'number_of_steps': self.number_of_steps,
+            'output_folder': self.output_folder,
+            'scan_folder': self.scan_folder,
+            'scan_filename': self.scan_filename,
+            'det_x': self.det_x,
+            'xmin': self.xmin,
+            'xmax': self.xmax,
+            'ymin': self.ymin,
+            'ymax': self.ymax,
+            'input_mythen_lids': self.input_mythen_lids,
+            'calibration_pixel': self.calibration_pixel,
+            'pixel_address': pixel_address
+        }
+
+        logger.info('Begin saving processed data.')
+        save_scan_data(xrd_matrix, xrd_dic)
         logger.info('Finished saving processed data.')
 
-        return direct_beam[:,0], direct_beam[:,1], direct_beam[:,2], direct_beam[:3]
+        return xrd_matrix[:,0], xrd_matrix[:,1], xrd_matrix[:,2], xrd_matrix[:3]
 
     def scan_main_run(self) -> tuple:
         """

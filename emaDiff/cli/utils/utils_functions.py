@@ -21,7 +21,7 @@ def calibration_cli(start_angle: float,
     calib = Calibration(start_angle, end_angle, steps, xc, yc, ny, cfo, cfi, xdet, ydet, lids_border)
     calibration_mythen_full_matrix, calibration_vector, calibration_volume, mythen_lids= calib.calibration_main_run()
 
-    calibration_hdf5_abs_file_path = "".join([output_file_path, cfi, "proc.h5"])
+    calibration_hdf5_abs_file_path = "".join([output_file_path, cfi, "proc_calibration.h5"])
 
     with h5py.File(calibration_hdf5_abs_file_path, "w") as h5f:
         h5f.create_group("data")
