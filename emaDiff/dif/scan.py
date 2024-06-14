@@ -75,6 +75,8 @@ class Scan:
             self.calibration_pixel = h5f["data/calibration_vector"][:].astype(np.float32)
             self.input_mythen_lids = h5f["data/mythen_lids"][:].astype(np.int16)
 
+        print(f"calibration pixel max: {self.calibration_pixel}")
+
     def get_volume(self) -> np.ndarray:
         """Reads a series of TIFF files into a 3D NumPy array (volume).
 
