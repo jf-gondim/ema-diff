@@ -35,8 +35,6 @@ class Calibration:
 
         self.xmin = xc - 1
         self.xmax = xc + 0
-        #self.ymin = yc - (int(ny/2) + 1)
-        #self.ymax = yc + int(ny/2)
         self.ymin = ny_begin + 1
         self.ymax = ny_end
         self.xdet = xdet # detector size in x axis in pixels

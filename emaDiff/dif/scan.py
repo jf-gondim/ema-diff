@@ -40,7 +40,7 @@ class Scan:
                  ny_end: int,
                  detector_size_x: int,
                  input_mythen_lids: np.ndarray,
-                 calibration_pixel: np.ndarray):
+                 calibration_pixel_file_path: str):
         """
         Initializes the Scan class with the given parameters.
 
@@ -68,12 +68,12 @@ class Scan:
         self.det_x           = detector_size_x
         self.xmin            = xc - 1
         self.xmax            = xc + 0
-        #self.ymin            = yc - int(ny / 2) + 1
-        #self.ymax            = yc + int(ny / 2)
         self.ymin            = ny_begin + 1
         self.ymax            = ny_end
         self.input_mythen_lids = input_mythen_lids
-        self.calibration_pixel = calibration_pixel
+        with h5py.File(calibration_pixel_file_path, "r") as h5f:
+            self.calibration_pixel = h5f["data/calibration_vector"][:].astype(np.float32)
+            self.input_mythen_lids = h5f["data/mythen_lids"][:].astype(np.int16)
 
     def get_volume(self) -> np.ndarray:
         """Reads a series of TIFF files into a 3D NumPy array (volume).
