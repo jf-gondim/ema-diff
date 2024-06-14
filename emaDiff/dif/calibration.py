@@ -24,17 +24,21 @@ class Calibration:
                  steps: int,
                  xc: int,
                  yc: int,
-                 ny: int,
+                 ny_begin: int,
+                 ny_end: int,
                  cfo: str,
                  cfi: str,
                  xdet: int,
                  ydet: int,
-                 lids_border: int):
+                 lids_border_left: int,
+                 lids_border_right: int):
 
         self.xmin = xc - 1
         self.xmax = xc + 0
-        self.ymin = yc - (int(ny/2) + 1)
-        self.ymax = yc + int(ny/2)
+        #self.ymin = yc - (int(ny/2) + 1)
+        #self.ymax = yc + int(ny/2)
+        self.ymin = ny_begin + 1
+        self.ymax = ny_end
         self.xdet = xdet # detector size in x axis in pixels
         self.ydet = ydet # detector size in y axis in pixels
 
@@ -43,7 +47,8 @@ class Calibration:
         self.end_angle   = end_angle
         self.c_Folder    = cfo
         self.c_Filename  = cfi
-        self.lids_border = lids_border
+        self.lids_border_left = lids_border_right
+        self.lids_border_right = lids_border_right
         self.calibration_step_size = (end_angle - start_angle) / steps
 
     def mythen(self, volume: np.ndarray) -> np.ndarray:
@@ -81,7 +86,7 @@ class Calibration:
 
         # Define any value of the lids_border as default?
         # The previous value was 5
-        self.mythen_lids = [ min(mythen_window[0]) + self.lids_border, max(mythen_window[0]) - self.lids_border ]
+        self.mythen_lids = [ min(mythen_window[0]) + self.lids_border_left, max(mythen_window[0]) - self.lids_border_right ]
         logger.info(f'Mythen lids values defined are: {self.mythen_lids}')
 
         # Apply windowing to Mythen data

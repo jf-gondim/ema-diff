@@ -102,12 +102,14 @@ def calibration(
     steps : Annotated[int, Argument(..., metavar="steps", help="Number of steps performed in the scan")],
     xc : Annotated[int, Argument(..., metavar="xc", help="Center of the detector in the x axis")],
     yc : Annotated[int, Argument(..., metavar="yc", help="Center of the detector in the y axis")],
-    ny: Annotated[int, Argument(..., metavar="ny", help="y axis width to crop the scan TIFF file")],
+    ny_begin : Annotated[int, Argument(..., metavar="ny_begin", help="y axis minimum value in pixel to crop the scan TIFF file")],
+    ny_end : Annotated[int, Argument(..., metavar="ny_end", help="y axis maximum value in pixel to crop the scan TIFF file")],
     cfo : Annotated[str, Argument(..., metavar="cfo", help="Absolute path of the calibration folder data")],
     cfi : Annotated[str, Argument(..., metavar="cfi", help="Name of the scan file")],
     xdet : Annotated[int, Argument(..., metavar="xdet", help="Size of the detector in the x axis in pixels")],
     ydet : Annotated[int, Argument(..., metavar="ydet", help="Size of the detector in the y axis in pixels")],
-    lids_border : Annotated[int, Argument(..., metavar="lids_border", help="Size of the border to crop the Mythen matrix")],
+    lids_border_left : Annotated[int, Argument(..., metavar="lids_border_left", help="Size of the border to crop the Mythen matrix on the left side")],
+    lids_border_right : Annotated[int, Argument(..., metavar="lids_border_right", help="Size of the border to crop the Mythen matrix")],
     output_file_path: Annotated[str, Argument(..., metavar="output_file_path", help="Absolute path to save the calibration file")]
 ) -> None:
 
@@ -125,17 +127,18 @@ def calibration(
      Calibration function for all Pilatus scan data.
 
     ╭─ Arguments ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-    │ *    start_angle      start_angle  First angle of the diffraction scan [default: None] [required]                                                                                     │
-    │ *    end_angle        end_angle    Final angle of the diffraction scan [default: None] [required]                                                                                     │
-    │ *    steps            steps        Number of steps performed in the scan [default: None] [required]                                                                                   │
-    │ *    xc               xc           Center of the detector in the x axis [default: None] [required]                                                                                    │
-    │ *    yc               yc           Center of the detector in the y axis [default: None] [required]                                                                                    │
-    │ *    ny               ny           y axis width to crop the scan TIFF file [default: None] [required]                                                                                 │
-    │ *    cfo              cfo          Absolute path of the calibration folder data [default: None] [required]                                                                            │
-    │ *    cfi              cfi          Name of the scan file [default: None] [required]                                                                                                   │
-    │ *    xdet             xdet         Size of the detector in the x axis in pixels [default: None] [required]                                                                            │
-    │ *    ydet             ydet         Size of the detector in the y axis in pixels [default: None] [required]                                                                            │
-    │ *    lids_border      lids_border  Size of the border to crop the Mythen matrix [default: None] [required]                                                                            │
+    │ *    start_angle       start_angle        First angle of the diffraction scan [default: None] [required]                                                                              │
+    │ *    end_angle         end_angle          Final angle of the diffraction scan [default: None] [required]                                                                              │
+    │ *    steps             steps              Number of steps performed in the scan [default: None] [required]                                                                            │
+    │ *    xc                xc                 Center of the detector in the x axis [default: None] [required]                                                                             │
+    │ *    yc                yc                 Center of the detector in the y axis [default: None] [required]                                                                             │
+    │ *    ny                ny                 y axis width to crop the scan TIFF file [default: None] [required]                                                                          │
+    │ *    cfo               cfo                Absolute path of the calibration folder data [default: None] [required]                                                                     │
+    │ *    cfi               cfi                Name of the scan file [default: None] [required]                                                                                            │
+    │ *    xdet              xdet               Size of the detector in the x axis in pixels [default: None] [required]                                                                     │
+    │ *    ydet              ydet               Size of the detector in the y axis in pixels [default: None] [required]                                                                     │
+    │ *    lids_border_left  lids_border_left   Size of the border to crop the Mythen matrix [default: None] [required]                                                                     │
+    │ *    lids_border_right lids_border_right  Size of the border to crop the Mythen matrix [default: None] [required]                                                                     │
     ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
     ╭─ Options ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
     │ --help          Show this message and exit.                                                                                                                                           │
@@ -166,12 +169,14 @@ def calibration(
                                        steps,
                                        xc,
                                        yc,
-                                       ny,
+                                       ny_begin,
+                                       ny_end,
                                        cfo,
                                        cfi,
                                        xdet,
                                        ydet,
-                                       lids_border,
+                                       lids_border_left,
+                                       lids_border_right,
                                        output_file_path)
 
 @app.command(name="scan", help="Function that generates the diffractogram for all Pilatus scan data.")
@@ -184,7 +189,8 @@ def scan(
     output_folder : Annotated[str, Argument(..., metavar="output_folder", help="Absolute path of the folder to save all the output values")],
     scan_folder : Annotated[str, Argument(..., metavar="scan_folder", help="Absolute path of the folder which contains the scan files")],
     scan_filename : Annotated[str, Argument(..., metavar="scan_filename", help="File name of the scan to generate the diffractogram")],
-    ny : Annotated[int, Argument(..., metavar="ny", help="y axis width to crop the scan TIFF file")],
+    ny_begin : Annotated[int, Argument(..., metavar="ny_begin", help="y axis minimum value in pixel to crop the scan TIFF file")],
+    ny_end : Annotated[int, Argument(..., metavar="ny_end", help="y axis maximum value in pixel to crop the scan TIFF file")],
     detector_size_x : Annotated[int, Argument(..., metavar="detector_size_x", help="Size of the detector in the x axis in pixels")],
     calibration_pixel_file_path : Annotated[str, Argument(..., metavar="calibration_pixel_file_path", help="Size of the border to crop the Mythen matrix")],
 ) -> None:
@@ -251,7 +257,8 @@ def scan(
                                 output_folder,
                                 scan_folder,
                                 scan_filename,
-                                ny,
+                                ny_begin,
+                                ny_end,
                                 detector_size_x,
                                 lids,
                                 calibration_pixel_vector)

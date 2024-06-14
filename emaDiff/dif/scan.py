@@ -36,7 +36,8 @@ class Scan:
                  output_folder: str,
                  scan_folder: str,
                  scan_filename: str,
-                 ny: int,
+                 ny_begin: int,
+                 ny_end: int,
                  detector_size_x: int,
                  input_mythen_lids: np.ndarray,
                  calibration_pixel: np.ndarray):
@@ -67,8 +68,10 @@ class Scan:
         self.det_x           = detector_size_x
         self.xmin            = xc - 1
         self.xmax            = xc + 0
-        self.ymin            = yc - int(ny / 2) + 1
-        self.ymax            = yc + int(ny / 2)
+        #self.ymin            = yc - int(ny / 2) + 1
+        #self.ymax            = yc + int(ny / 2)
+        self.ymin            = ny_begin + 1
+        self.ymax            = ny_end
         self.input_mythen_lids = input_mythen_lids
         self.calibration_pixel = calibration_pixel
 

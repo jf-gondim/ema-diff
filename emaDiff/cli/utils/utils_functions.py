@@ -9,16 +9,18 @@ def calibration_cli(start_angle: float,
                     steps: int,
                     xc: int,
                     yc: int,
-                    ny: int,
+                    ny_begin: int,
+                    ny_end: int,
                     cfo: str,
                     cfi: str,
                     xdet: int,
                     ydet: int,
-                    lids_border: int,
+                    lids_border_left: int,
+                    lids_border_right: int,
                     output_file_path: str):
 
 
-    calib = Calibration(start_angle, end_angle, steps, xc, yc, ny, cfo, cfi, xdet, ydet, lids_border)
+    calib = Calibration(start_angle, end_angle, steps, xc, yc, ny_begin, ny_end, cfo, cfi, xdet, ydet, lids_border_left, lids_border_right)
     calibration_mythen_full_matrix, calibration_vector, calibration_volume, mythen_lids= calib.calibration_main_run()
 
     calibration_hdf5_abs_file_path = "".join([output_file_path, cfi, "proc_calibration.h5"])
@@ -39,7 +41,8 @@ def scan_cli(initial_angle: float,
              output_folder: str,
              scan_folder: str,
              scan_filename: str,
-             ny: int,
+             ny_begin: int,
+             ny_end: int,
              detector_size_x: int,
              input_mythen_lids: np.ndarray,
              calibration_pixel: np.ndarray):
@@ -52,7 +55,8 @@ def scan_cli(initial_angle: float,
                 output_folder,
                 scan_folder,
                 scan_filename,
-                ny,
+                ny_begin,
+                ny_end,
                 detector_size_x,
                 input_mythen_lids,
                 calibration_pixel)
