@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 import uuid
 import glob
 import h5py
@@ -13,35 +14,10 @@ import multiprocessing as mp
 
 from .read_tiff import read_tif_volume
 from .._version import __version__
+from .log_module import configure_logger
 
-'''----------------------------------------------'''
-import sys
-import logging
+logger = configure_logger(__name__)
 
-# Define the log level for the console
-console_log_level = logging.DEBUG
-
-# Create a logger with the module name
-logger = logging.getLogger('emaDiff')
-
-# Create a handler for the console (stdout)
-console_handler = logging.StreamHandler(sys.stdout)
-
-# Define the format of the log messages
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-console_handler.setFormatter(formatter)
-
-# Add the handler to the logger
-logger.addHandler(console_handler)
-
-# Set the log level for the logger and the handler
-logger.setLevel(logging.DEBUG)
-console_handler.setLevel(console_log_level)
-
-# Constant for the debug level (not used in the current code, but kept as a reference)
-DEBUG = logging.DEBUG
-
-'''----------------------------------------------'''
 
 def get_file_list(steps: int,
                   start_angle: float,
@@ -94,6 +70,16 @@ def get_file_list(steps: int,
     return filelist
 
 def save_scan_data(xrd_matrix, dic):
+    """
+    Save the scan data to an HDF5 file.
+
+    Parameters:
+    - xrd_matrix (numpy.ndarray): The XRD matrix containing the scan data.
+    - dic (dict): A dictionary containing the metadata for the scan.
+
+    Returns:
+        None
+    """
     # Add verification if path exists. If doesn't create the path and continue the processing and add log messages
     diffractogram_file_path = "".join([dic['output_folder'], dic['scan_filename'], 'proc.h5'])
     with h5py.File(diffractogram_file_path, "w") as h5f:

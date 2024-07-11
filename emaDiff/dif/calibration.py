@@ -12,9 +12,11 @@ import multiprocessing as mp
 
 from scipy.signal import find_peaks
 
-from .io import get_file_list, logger
+from .io import get_file_list
 from .read_tiff import read_tif_volume
+from .log_module import configure_logger
 
+logger = configure_logger(__name__)
 
 class Calibration:
 

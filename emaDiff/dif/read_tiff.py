@@ -9,6 +9,9 @@ import SharedArray as sa
 import PIL.Image as Image
 import multiprocessing as mp
 import matplotlib.pyplot as plt
+from .log_module import configure_logger
+
+logger = configure_logger(__name__)
 
 def read_tif_volume(params):
     """
