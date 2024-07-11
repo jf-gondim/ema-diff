@@ -227,10 +227,19 @@ class Scan:
 
 
     def mythen(self, volume: np.ndarray) -> tuple:
+        """
+        Calculates the Mythen matrix and returns the transposed matrix along with other related values.
+
+        Args:
+            volume (np.ndarray): The input volume array.
+
+        Returns:
+            tuple: A tuple containing the Mythen matrix, the cropped Mythen matrix, and the input Mythen lids.
+        """
         # Return the mythen matrix transposed?
-        mythen        = np.sum(volume, axis = 1) #Projecting on the y/2theta plane
-        open_mythen   = np.sum(mythen, axis = 0)
-        croped_mythen = mythen[ :, self.input_mythen_lids[0]:self.input_mythen_lids[1] ]
+        mythen        = np.sum(volume, axis=1)  # Projecting on the y/2theta plane
+        open_mythen   = np.sum(mythen, axis=0)
+        croped_mythen = mythen[:, self.input_mythen_lids[0]:self.input_mythen_lids[1]]
 
         return mythen, croped_mythen, self.input_mythen_lids
 
