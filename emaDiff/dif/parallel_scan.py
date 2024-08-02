@@ -3,6 +3,7 @@ import time
 import numpy as np
 import SharedArray as sa
 import multiprocessing as mp
+
 from .log_module import configure_logger
 
 logger = configure_logger(__name__)

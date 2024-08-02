@@ -4,6 +4,7 @@ FROM ubuntu:20.04
 # Environment Variables
 # Set locale for consistent text encoding (UTF-8)
 ENV LC_ALL=C.UTF-8
+
 # Disable interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 

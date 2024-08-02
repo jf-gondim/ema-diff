@@ -73,8 +73,8 @@ def save_scan_data(xrd_matrix, dic):
     Save the scan data to an HDF5 file.
 
     Parameters:
-    - xrd_matrix (numpy.ndarray): The XRD matrix containing the scan data.
-    - dic (dict): A dictionary containing the metadata for the scan.
+        - xrd_matrix (numpy.ndarray): The XRD matrix containing the scan data.
+        - dic (dict): A dictionary containing the metadata for the scan.
 
     Returns:
         None
