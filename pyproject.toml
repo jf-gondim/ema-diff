@@ -12,7 +12,7 @@ name = "emaDiff"
 description = "EMA routines to calibrate Pilatus and obtain the diffratogram"
 license = { text = "LGPL-3.0" }
 requires-python = ">=3.8"
-version = "0.0.1"
+version = "0.0.3"
 authors = [
     { name = "João F. G. de A. Oliveira", email = "joao.oliveira@lnls.br" },
     { name = "Guilherme Calligaris de Andrade", email = "guilherme.calligaris@lnls.br" },

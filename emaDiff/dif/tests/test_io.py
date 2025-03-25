@@ -2,10 +2,13 @@ import os
 import h5py
 import unittest
 import numpy as np
-from dif.io import save_scan_data
+from ..io import save_scan_data
 
 class IOTest(unittest.TestCase):
     def test_save_scan_data(self):
+        # Added pdb entry point to debug
+        import pdb;pdb.set_trace()
+
         # Create dummy data
         xrd_matrix = np.array([[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]])
         dic = {
@@ -26,15 +29,13 @@ class IOTest(unittest.TestCase):
             'pixel_address': 100.0
         }
 
-        # Call the function
-        save_scan_data(xrd_matrix, dic)
 
         # Verify the HDF5 file was created and contains the expected data
         # Get the current directory
         current_dir = os.getcwd()
 
         # Update the output folder path
-        dic['output_folder'] = current_dir
+        dic['output_folder'] = current_dir + '/'
 
         # Call the function
         save_scan_data(xrd_matrix, dic)
@@ -43,7 +44,7 @@ class IOTest(unittest.TestCase):
         with h5py.File(os.path.join(current_dir, 'scanproc.h5'), 'r') as h5f:
             # Rest of the code remains the same
             # Verify the shape of the saved data
-            saved_data = h5f['xrd_data'][:]
+            saved_data = h5f['proc/intensities'][:]
             self.assertEqual(saved_data.shape, xrd_matrix.shape)
 
             # Verify the values of the saved data
