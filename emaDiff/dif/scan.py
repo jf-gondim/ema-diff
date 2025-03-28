@@ -123,7 +123,6 @@ class Scan:
         tth = np.round(tth, 3)
         logger.info(f'Two theta generated values: {tth[0]} and {tth[-1]}')
 
-        import pdb;pdb.set_trace()
         # Perform the theta to pixel mapping using the calibration_pixel vector as input calculated in the `Calibration` class
         logger.info('Calculating the pixel address vector mapping...')
         pixel_address = get_pixel_address(calibration_pixel_=self.calibration_pixel, tth_=tth, steps_=self.number_of_steps)
@@ -238,7 +237,6 @@ class Scan:
             tuple: A tuple containing the Mythen matrix, the cropped Mythen matrix, and the input Mythen lids.
         """
         # Return the mythen matrix transposed?
-        import pdb;pdb.set_trace()
         mythen        = np.sum(volume, axis=1)  # Projecting on the y/2theta plane
         #open_mythen   = np.sum(mythen, axis=0)
         #croped_mythen = mythen[:, self.input_mythen_lids[0]:self.input_mythen_lids[1]] #please?

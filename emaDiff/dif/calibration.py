@@ -153,7 +153,6 @@ class Calibration:
 
         # Calculate the vector of calibration to use as input in the Scan class
         logger.info('Calculating calibration vector using the Mythen matrix...')
-        import pdb;pdb.set_trace()
         calibration_pixel_vector = self.calibration_pixel(self.detector)
 
         logger.info('Finished the calibration pipeline for the Pilatus.')
