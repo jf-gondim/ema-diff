@@ -80,17 +80,20 @@ class Calibration:
 
         # Determine the ROI window
         mythen_window = np.asarray(np.nonzero(open_mythen > threshold))
+        #import pdb;pdb.set_trace()
 
         # Define any value of the lids_border as default?
         # The previous value was 5
-        self.mythen_lids = [ min(mythen_window[0]) + self.lids_border_left, max(mythen_window[0]) - self.lids_border_right ]
+        crop_index =  min(mythen_window[0]) + self.lids_border_left, max(mythen_window[0]) - self.lids_border_right 
+        self.mythen_lids = [ crop_index[0], crop_index[1] ]
         logger.info(f'Mythen lids values defined are: {self.mythen_lids}')
+        #import pdb;pdb.set_trace()
 
         # Apply windowing to Mythen data
         mythen = mythen[:, self.mythen_lids[0]:self.mythen_lids[1]]
         #mythen = np.transpose(mythen)
 
-        return mt_copy.T
+        return mt_copy.T, crop_index
 
     def calibration_pixel(self, mythen_matrix) -> np.ndarray:
         """Calculates the calibration pixel values for each detector channel.
@@ -111,8 +114,6 @@ class Calibration:
             calibration_pixel[index] = pixel_verification_value * self.calibration_step_size + self.start_angle
 
         return -calibration_pixel
-
-
 
     def calibration_main_run(self) -> tuple:
         """
@@ -135,6 +136,7 @@ class Calibration:
             SomeException: An exception that might occur during file operations or computations.
         """
         # Create the list of all calibration files
+        #import pdb;pdb.set_trace()
         logger.info('Generating list of files.')
         self.list_of_files = get_file_list(self.steps, self.start_angle, self.end_angle, self.c_Folder, self.c_Filename )
 
@@ -147,12 +149,13 @@ class Calibration:
 
         # Calculate the detector matriz as if it was measured using the Mythen linear detector
         logger.info('Calculating Mythen matrix.')
-        self.detector = self.mythen(self.volume)
+        self.detector, new_crop_window = self.mythen(self.volume)
 
         # Calculate the vector of calibration to use as input in the Scan class
         logger.info('Calculating calibration vector using the Mythen matrix...')
+        import pdb;pdb.set_trace()
         calibration_pixel_vector = self.calibration_pixel(self.detector)
 
         logger.info('Finished the calibration pipeline for the Pilatus.')
 
-        return self.detector, calibration_pixel_vector, self.volume, self.mythen_lids
+        return self.detector, calibration_pixel_vector, self.volume, new_crop_window

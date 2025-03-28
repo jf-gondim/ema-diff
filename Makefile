@@ -24,3 +24,7 @@ clean:
 
 install:
 	pip install .
+
+dev:
+	pip install . --no-deps --no-build-isolation
+

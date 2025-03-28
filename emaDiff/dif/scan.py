@@ -123,11 +123,12 @@ class Scan:
         tth = np.round(tth, 3)
         logger.info(f'Two theta generated values: {tth[0]} and {tth[-1]}')
 
+        import pdb;pdb.set_trace()
         # Perform the theta to pixel mapping using the calibration_pixel vector as input calculated in the `Calibration` class
         logger.info('Calculating the pixel address vector mapping...')
         pixel_address = get_pixel_address(calibration_pixel_=self.calibration_pixel, tth_=tth, steps_=self.number_of_steps)
         # Round pixel_address values?
-        pixel_address = np.round(pixel_address[:, mythen_lids[0]:mythen_lids[1]], 3)
+        pixel_address = np.round(pixel_address[:, mythen_lids[0]:mythen_lids[1]], 3) #please?
         #logger.info(f'Calculated pixel addresses: [{pixel_address[:3]} ... {pixel_address[:-4]}]')
 
         flat_pixel_address = pixel_address.flatten()
@@ -149,8 +150,8 @@ class Scan:
         #bins = np.arange(det_start - self.size_step / 2, det_end + self.size_step, self.size_step, dtype=float)
         hist, _ = np.histogram(flat_pixel_address, bins=bins)
 
-        logger.info(f'bins: {bins}')
-        logger.info(f'histogram: {hist}')
+        #logger.info(f'bins: {bins}')
+        #logger.info(f'histogram: {hist}')
 
         histogram_size = len(hist)
         number_of_output_parameters = 4
@@ -237,9 +238,11 @@ class Scan:
             tuple: A tuple containing the Mythen matrix, the cropped Mythen matrix, and the input Mythen lids.
         """
         # Return the mythen matrix transposed?
+        import pdb;pdb.set_trace()
         mythen        = np.sum(volume, axis=1)  # Projecting on the y/2theta plane
-        open_mythen   = np.sum(mythen, axis=0)
-        croped_mythen = mythen[:, self.input_mythen_lids[0]:self.input_mythen_lids[1]]
+        #open_mythen   = np.sum(mythen, axis=0)
+        #croped_mythen = mythen[:, self.input_mythen_lids[0]:self.input_mythen_lids[1]] #please?
+        croped_mythen = mythen
 
         return mythen, croped_mythen, self.input_mythen_lids
 
