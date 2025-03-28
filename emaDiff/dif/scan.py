@@ -239,8 +239,7 @@ class Scan:
         # Return the mythen matrix transposed?
         mythen        = np.sum(volume, axis=1)  # Projecting on the y/2theta plane
         #open_mythen   = np.sum(mythen, axis=0)
-        #croped_mythen = mythen[:, self.input_mythen_lids[0]:self.input_mythen_lids[1]] #please?
-        croped_mythen = mythen
+        croped_mythen = mythen[:, self.input_mythen_lids[0]:self.input_mythen_lids[1]] #please?
 
         return mythen, croped_mythen, self.input_mythen_lids
 
