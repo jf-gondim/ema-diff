@@ -49,7 +49,6 @@ dependencies = [
     "ipykernel",
     "setuptools>=64.0.0",
     "matplotlib==3.7.5",
-    "SharedArray==3.2.3",
     "scikit-build>=0.12.0",
     "scikit-image==0.21.0",
     "setuptools_scm[toml]>=8.0",
